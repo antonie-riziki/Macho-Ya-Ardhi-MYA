@@ -1,0 +1,26 @@
+[
+  {
+    "parcel_number": "KJD/Kaputiei/1234",
+    "county": "Kajiado",
+    "issue": "Multiple overlapping title deeds reported",
+    "notice_date": "2023-11-12",
+    "source": "Kenya Gazette Vol CXXV",
+    "severity": "HIGH"
+  },
+  {
+    "parcel_number": "Nairobi/Block/82/733",
+    "county": "Nairobi",
+    "issue": "Disputed ownership, active court case ELC No 123",
+    "notice_date": "2024-02-05",
+    "source": "Kenya Gazette Vol CXXVI",
+    "severity": "HIGH"
+  },
+  {
+    "parcel_number": "LR/209/2489",
+    "county": "Nairobi",
+    "issue": "Caveat placed: pending succession matter",
+    "notice_date": "2023-08-20",
+    "source": "Kenya Gazette Vol CXXIV",
+    "severity": "MEDIUM"
+  }
+]
