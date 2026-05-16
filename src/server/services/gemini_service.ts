@@ -1,14 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
-    }
-  }
-});
-
 export interface ExtractionResult {
   parcel_number: string | null;
   registered_owner: string | null;
@@ -23,8 +14,27 @@ export interface ExtractionResult {
   confidence: number;
 }
 
-export async function extractDocumentData(fileBuffer: Buffer, mimeType: string): Promise<ExtractionResult> {
+export async function extractDocumentData(fileBuffer: Buffer, mimeType: string, customApiKey?: string): Promise<ExtractionResult> {
   const base64Data = fileBuffer.toString("base64");
+  const apiKeyToUse = customApiKey || process.env.GEMINI_API_KEY;
+
+  if (!apiKeyToUse) {
+    throw new Error("API key is missing. Please provide a Gemini API Key.");
+  }
+
+  // Sanitize mime types for Gemini vision compatibility
+  let validMimeType = mimeType;
+  if (validMimeType === 'image/jpg') validMimeType = 'image/jpeg';
+  if (!validMimeType.includes('/')) validMimeType = 'image/jpeg';
+
+  const ai = new GoogleGenAI({
+    apiKey: apiKeyToUse,
+    httpOptions: {
+      headers: {
+        'User-Agent': 'aistudio-build',
+      }
+    }
+  });
 
   try {
     const response = await ai.models.generateContent({
@@ -33,7 +43,7 @@ export async function extractDocumentData(fileBuffer: Buffer, mimeType: string):
         {
           inlineData: {
             data: base64Data,
-            mimeType: mimeType
+            mimeType: validMimeType
           }
         },
         "You are Macho Ya Ardhi, a Kenyan land fraud detection assistant. Analyze the uploaded land transaction document. Extract the following fields: parcel_number, registered_owner, seller_name, id_number, document_type, issue_date, registry, stamp_present, signature_present, suspicious_edits, confidence. Flag visible signs of tampering, inconsistent fonts, altered dates, missing stamps, missing signatures, unclear parcel numbers, or mismatched ownership details. Return ONLY valid JSON. No markdown."

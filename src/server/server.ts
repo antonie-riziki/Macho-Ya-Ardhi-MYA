@@ -24,7 +24,7 @@ async function startServer() {
   app.post("/api/verify-land", upload.array("documents", 5), async (req, res) => {
     try {
       const files = req.files as Express.Multer.File[];
-      const userInput = req.body; // { buyer_name, seller_name, parcel_number, county }
+      const userInput = req.body; // { buyer_name, seller_name, parcel_number, county, api_key }
       
       if (!files || files.length === 0) {
          res.status(400).json({ error: "No documents uploaded." });
@@ -35,7 +35,7 @@ async function startServer() {
 
       // 1. Process files through Gemini Vision parallel
       const extractionPromises = files.map(file => 
-        extractDocumentData(file.buffer, file.mimetype)
+        extractDocumentData(file.buffer, file.mimetype, userInput.api_key)
       );
       const extractedDocs = await Promise.all(extractionPromises);
 
